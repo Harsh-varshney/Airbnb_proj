@@ -1,23 +1,23 @@
-<% layout("/layouts/boilerplate.ejs") %>
+<% layout("/layouts/boilerplate.ejs" , { hideFlash: true }) %>
 
-<h2>All Listings</h2>
-<!-- <form action="/listings/new" method="get">
-    <button>Create New Listing</button>
-</form> -->
-
+<%- include("../includes/filters.ejs")%>
 
 <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
     <% for(let listing of allListings) { %>
         <a href="/listings/<%= listing._id %>" class="listing-link">           
              <div class="card col"> <!-- style="width: 17.8rem;"-->
-                <img src="<%= listing.image %>" class="card-img-top" alt="listing-img" style="height: 17.5rem;">
-                
+                <img src="<%= listing.image.url %>" class="card-img-top" alt="listing-img" style="height: 17.10rem;">
+
                 <div class="card-img-overlay"></div>
                 <div class="card-body">
                     <p class="card-text">
                         <b><%= listing.title %></b> <br>
                         <% if (listing.price !== null) { %>
-                            &#8377; <%= listing.price.toLocaleString("en-IN") %> /night
+                            &#8377;
+                            <span class="price base-price" data-original="<%= listing.price %>">
+                                <%= listing.price.toLocaleString("en-IN") %>
+                            </span>/night
+                            <b><i class="tax-info">&nbsp; &nbsp;(+18% GST)</i></b>
                         <% } else { %>
                             Price not available
                         <% } %>
@@ -27,3 +27,30 @@
         </a>
     <% } %>
 </div>
+
+<script>
+    let taxSwitch = document.getElementById("flexSwitchCheckDefault");
+
+    taxSwitch.addEventListener("click", () => {
+
+        // Toggle +18% GST text visibility
+        let taxInfo = document.getElementsByClassName("tax-info");
+        for (let info of taxInfo) {
+            info.style.display = taxSwitch.checked ? "inline" : "none";
+        }
+
+        // Change price dynamically
+        let prices = document.getElementsByClassName("base-price");
+
+        for (let price of prices) {
+            let original = Number(price.getAttribute("data-original"));
+
+            if (taxSwitch.checked) {
+                let total = Math.round(original * 1.18);
+                price.innerText = total.toLocaleString("en-IN");
+            } else {
+                price.innerText = original.toLocaleString("en-IN");
+            }
+        }
+    });
+</script>

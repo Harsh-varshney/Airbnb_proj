@@ -9,9 +9,8 @@ const listingSchema = new mongoose.Schema({
     },
     description : String,
     image : {
-        type : String,
-        default : "https://a0.muscache.com/im/pictures/5c4ce6dd-800d-445a-9277-5a18dda7bed1.jpg?im_w=960",
-        set : (v) => (v === "" ? "https://a0.muscache.com/im/pictures/5c4ce6dd-800d-445a-9277-5a18dda7bed1.jpg?im_w=960" : v)
+        url : String,
+        filename : String   
     },
     price : Number,
     location : String,
@@ -24,7 +23,14 @@ const listingSchema = new mongoose.Schema({
     owner : {
         type : Schema.Types.ObjectId,
         ref : "User"
-    }
+    },
+    category: {
+        type: String,
+        enum: [
+            "beach","mountain","city","farms","snow","lakes","camping","boats","rooms","trending"
+        ],
+        // required: true
+  }
 })
 
 listingSchema.post("findOneAndDelete",async (listing) => {

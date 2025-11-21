@@ -1,3 +1,8 @@
+if(process.env.NODE_ENV != "production"){
+    require('dotenv').config()
+}
+// console.log(process.env)
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -22,12 +27,15 @@ app.use(express.static(path.join(__dirname,"public")));
 app.use(methodOverride("_method"));
 app.engine("ejs",ejsMate);
 
+let dbUrl = process.env.ATLASDB_URL;
 main().then(() => {
     console.log("connect successfully");
 }).catch(err => console.log(err));
 
+
 async function main(){
     await mongoose.connect("mongodb://127.0.0.1:27017/project");
+    // await mongoose.connect(dbUrl);
 }
 
 let port = 8080;
@@ -78,9 +86,9 @@ app.use((req,res,next) => {
 });
 
 
-app.get("/",(req,res) => {
-    res.send("root route created");
-});
+// app.get("/",(req,res) => {
+//     res.send("root route created");
+// });
 
 
 app.use("/listings",listingRouter);
@@ -100,20 +108,3 @@ app.use((err,req,res,next) => {
 })
 
 
-
-// listing route
-// app.get("/testListing", (req,res) => {
-//     let sampleListing = new Listing({
-//         title : "my Village",
-//         description : "by the river",
-//         price : 12000,
-//         location : "kheragarh, Agra",
-//         country : "India"
-//     })
-
-//     sampleListing.save().then((res) => {
-//         console.log(res);
-//     }).catch(err => console.log(err));
-    
-//     res.send("listing work");
-// });
